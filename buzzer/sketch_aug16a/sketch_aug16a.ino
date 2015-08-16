@@ -1,24 +1,41 @@
-int buzzer = 7;
+#include "pitches.h"
+ 
+int melody[] = {0, NOTE_A4, NOTE_B4, NOTE_C5, NOTE_D5, NOTE_E5, NOTE_F5, NOTE_G5};
+
+const int button[] = {22,28,34};
+const int led[] = {-1, 4, 5, 6 ,7 , 9, 10, 11};
+const int buzzer = 8;
+ 
 void setup() {
-  // put your setup code here, to run once:
-  pinMode(buzzer, OUTPUT);
+  int i;
+  for (i=1;i<=7;i++){
+    pinMode(led[i], OUTPUT);
+  }
+  for (i=0;i<3;i++){
+    pinMode(button[i], INPUT);
+  }
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  unsigned char i, j;
-  while (1){
-    for (i=0;i<80;i++){
-      digitalWrite(buzzer, HIGH);
-      delay(1);
-      digitalWrite(buzzer, LOW);
-      delay(1);
-    }
-    for (i=0;i<100;i++){
-      digitalWrite(buzzer, HIGH);
-      delay(2);
-      digitalWrite(buzzer, LOW);
-      delay(2);
-    }
+  int i, num;
+  int b[3];
+  num = 0;
+  for (i=0;i<3;i++){
+    b[i] = digitalRead(button[i]);
   }
+  num |= ( b[0] | (b[1]<<1) | (b[2]<<2) );
+  
+  for (i=1;i<=7;i++){
+    if (num == i)
+      digitalWrite(led[i], HIGH);
+    else
+      digitalWrite(led[i], LOW);
+  }
+  
+  if (num > 0){
+    tone(buzzer, melody[num]);
+  }
+  delay(200);
+  noTone(buzzer);
 }
+
